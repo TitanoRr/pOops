@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 50647831368758952}
   - component: {fileID: 114964943924686530}
   - component: {fileID: 114617463467841304}
+  - component: {fileID: 58910020353677118}
   m_Layer: 0
   m_Name: Poop
   m_TagString: Untagged
@@ -64,6 +65,21 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!58 &58910020353677118
+CircleCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1461284111477276}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!114 &114617463467841304
 MonoBehaviour:
   m_ObjectHideFlags: 1

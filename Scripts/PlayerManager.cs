@@ -37,8 +37,9 @@ public class PlayerManager : MonoBehaviourPun
             if (Input.GetKeyDown(poopKey) || Input.GetKeyDown(altPoopKey))
             {
                 rb.AddRelativeForce(poopSpeed * Vector2.up, ForceMode2D.Impulse);
-                Instantiate(poop, poopSpawner.position,
-                    poopSpawner.rotation); //TODO: Replace this with PhotonNetwork.Instatiate() when done testing!
+                //Instantiate(poop, poopSpawner.position,
+                    //poopSpawner.rotation); //TODO: Replace this with PhotonNetwork.Instatiate() when done testing!
+                PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
             }
 
             if (Input.GetKey(rotateRightKey))

@@ -19,8 +19,8 @@ public class PauseButton : MonoBehaviour
         {
             if (exitButton.activeSelf)
             {
-                exitButton.SetActive(false);
-            }
+                exitButton.SetActive(false); 
+            } 
             else
             {
                 exitButton.SetActive(true);
