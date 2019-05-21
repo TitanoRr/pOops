@@ -8,6 +8,8 @@ public class PlayerManager : MonoBehaviourPun
     [SerializeField] private GameObject poop; //the poop prefab to be pooped!
     [SerializeField] private Transform poopSpawner; //the poop spawner transform the player has
 
+    [SerializeField] private float poopLifetime = 10.0f;
+
     [SerializeField] private int poopSpeed = 10; //the player's move speed
     [SerializeField] private int rotSpeed = 10; //the player's rotation speed
 
@@ -30,6 +32,23 @@ public class PlayerManager : MonoBehaviourPun
         InputCheck();
 	}
 
+    private void Respawn()
+    {
+        //for now, this just sets the player back to 0,0,0
+        //later, this will respawn the player at one of the spawn points
+        rb.velocity = Vector2.zero;
+        transform.position = Vector3.zero;
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (photonView.IsMine && PhotonNetwork.IsConnected)
+        {
+            Respawn();
+            //TODO: Lose a life
+        }
+    }
+
     private void InputCheck()
     {
         if (photonView.IsMine && PhotonNetwork.IsConnected)
@@ -37,9 +56,8 @@ public class PlayerManager : MonoBehaviourPun
             if (Input.GetKeyDown(poopKey) || Input.GetKeyDown(altPoopKey))
             {
                 rb.AddRelativeForce(poopSpeed * Vector2.up, ForceMode2D.Impulse);
-                //Instantiate(poop, poopSpawner.position,
-                    //poopSpawner.rotation); //TODO: Replace this with PhotonNetwork.Instatiate() when done testing!
-                PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
+                GameObject tempPlaceholder = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
+                Destroy(tempPlaceholder, poopLifetime); //destroys the poop after 10 seconds
             }
 
             if (Input.GetKey(rotateRightKey))

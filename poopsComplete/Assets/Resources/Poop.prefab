@@ -39,7 +39,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1461284111477276}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.001, y: -0.87, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -64,7 +64,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!58 &58910020353677118
 CircleCollider2D:
   m_ObjectHideFlags: 1
@@ -88,13 +88,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1461284111477276}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e7cb724808c322458aa4d15f5035fa9, type: 3}
+  m_Script: {fileID: 11500000, guid: d0dc533a3cde17a4bb6edca5b1b8d97e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizeVelocity: 1
-  m_SynchronizeAngularVelocity: 0
-  m_TeleportEnabled: 0
-  m_TeleportIfDistanceGreaterThan: 3
+  poopFlyingSpeed: 350
 --- !u!114 &114964943924686530
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -103,19 +100,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1461284111477276}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Script: {fileID: 11500000, guid: 0a9782e9dd5aeca458e5f875ce273c00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  ObservedComponents:
-  - {fileID: 114617463467841304}
-  viewIdField: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!114 &114990436966011714
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -124,10 +115,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1461284111477276}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ae1f3d44f9f7c54c9a9ddc65e00cb3b, type: 3}
+  m_Script: {fileID: 11500000, guid: 641938b2a358e8b43a9c089d17c2a983, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poopFlyingSpeed: 100
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 114964943924686530}
+  viewIdField: 0
+  InstantiationId: 2
+  isRuntimeInstantiated: 0
 --- !u!212 &212408799123577736
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -162,8 +162,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 068d7375bf2f77e4f8955305579dae81, type: 3}
-  m_Color: {r: 0.8088235, g: 0.28448278, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 063191346f46fce41816bf174e26094c, type: 3}
+  m_Color: {r: 0.5147059, g: 0.28653353, b: 0.16273789, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

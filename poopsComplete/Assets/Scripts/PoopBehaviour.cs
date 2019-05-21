@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PoopBehaviour : MonoBehaviour
 {
-    [SerializeField] private int poopFlyingSpeed = 1;
+    [SerializeField] private int poopFlyingSpeed;
 
     private Rigidbody2D rb; //the poop's rigidbody2d
 

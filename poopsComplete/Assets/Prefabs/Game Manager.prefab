@@ -48,8 +48,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 1065856032775330}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76a7cda77f586124f913ee75b3706337, type: 3}
+  m_Script: {fileID: 11500000, guid: 3d40079850a6dbf45acb63a1c10ea3b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 1951508524338062, guid: a9bfcc74867d13343a84e5f3e68e3acc,
+  playerPrefab: {fileID: 1951508524338062, guid: 5e1f6b9ad7ed6c442903774bcda04a13,
     type: 2}
