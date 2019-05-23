@@ -92,6 +92,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poopFlyingSpeed: 350
+  poopLifetime: 10
 --- !u!114 &114964943924686530
 MonoBehaviour:
   m_ObjectHideFlags: 1

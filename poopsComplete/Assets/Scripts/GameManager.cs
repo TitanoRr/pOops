@@ -21,9 +21,16 @@ namespace poops_Namespace
             }
             else
             {
-                Vector3 position = new Vector3(Random.Range(-9.0f, 9.0f), Random.Range(-9.0f, 9.0f), 0);
-                PhotonNetwork.Instantiate(this.playerPrefab.name,position, Quaternion.identity, 0);
+                SpawnPlayer();
             }
+        }
+
+        /// <summary>
+        /// Spawns the player in the arena. Position gets set at the PlayerManager.
+        /// </summary>
+        private void SpawnPlayer()
+        {
+            PhotonNetwork.Instantiate(this.playerPrefab.name, Vector3.zero, Quaternion.identity, 0);
         }
 
         public override void OnLeftRoom()

@@ -356,7 +356,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 34a31aee2b036954ebeaa9b04270de9c, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -418,13 +418,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   poop: {fileID: 1461284111477276, guid: 58d7ec1952215a045b51ff5308bd14b4, type: 2}
   poopSpawner: {fileID: 4561484765903044}
-  poopLifetime: 10
   poopSpeed: 10
   rotSpeed: 10
   rotateLeftKey: 97
   rotateRightKey: 100
   poopKey: 119
   altPoopKey: 32
+  poopPressure: 0
+  poopLifetime: 10
+  minPoop: 2
+  maxPoopPressure: 10
+  poopMultiplier: 10
 --- !u!114 &114109720071427886
 MonoBehaviour:
   m_ObjectHideFlags: 1

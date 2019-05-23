@@ -11,7 +11,7 @@ namespace poops_Namespace
         [SerializeField] private GameObject progressLabel;
         [SerializeField] private GameObject controlPanel;
 
-        [SerializeField] private byte maxPlayers = 6;
+        [SerializeField] private byte maxPlayers = 4; //this allows a total of 5 rooms with the free version (5 maxed rooms)
 
         private string gameVersion = "1"; //only updated when a MAJOR update is up!
 
@@ -27,12 +27,6 @@ namespace poops_Namespace
         {
             controlPanel.SetActive(true);
             progressLabel.SetActive(false);
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
         }
 
         public void Connect()
