@@ -12,6 +12,7 @@ namespace poops_Namespace
     {
         public GameObject playerPrefab;
 
+       
         void Start()
         {
             if (playerPrefab == null)
@@ -20,7 +21,8 @@ namespace poops_Namespace
             }
             else
             {
-                PhotonNetwork.Instantiate(this.playerPrefab.name, Vector3.zero, Quaternion.identity, 0);
+                Vector3 position = new Vector3(Random.Range(-9.0f, 9.0f), Random.Range(-9.0f, 9.0f), 0);
+                PhotonNetwork.Instantiate(this.playerPrefab.name,position, Quaternion.identity, 0);
             }
         }
 

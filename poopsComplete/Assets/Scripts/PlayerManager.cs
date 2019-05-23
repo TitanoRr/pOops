@@ -8,6 +8,10 @@ public class PlayerManager : MonoBehaviourPun
     [SerializeField] private GameObject poop; //the poop prefab to be pooped!
     [SerializeField] private Transform poopSpawner; //the poop spawner transform the player has
 
+    [SerializeField] private float poopPressure;
+    private float minPoop;
+    private float maxPoopPressure;
+
     [SerializeField] private float poopLifetime = 10.0f;
 
     [SerializeField] private int poopSpeed = 10; //the player's move speed
@@ -17,6 +21,7 @@ public class PlayerManager : MonoBehaviourPun
     [SerializeField] private KeyCode rotateRightKey = KeyCode.D;
     [SerializeField] private KeyCode poopKey = KeyCode.W;
     [SerializeField] private KeyCode altPoopKey = KeyCode.Space;
+    
 
     private Rigidbody2D rb; //the player's rigibody2d
 
@@ -24,6 +29,9 @@ public class PlayerManager : MonoBehaviourPun
 	void Start ()
     {
         rb = GetComponent<Rigidbody2D>();
+        poopPressure = 0f;
+        minPoop = 2f;
+        maxPoopPressure = 10f;
     }
 
     // Update is called once per frame
@@ -53,11 +61,28 @@ public class PlayerManager : MonoBehaviourPun
     {
         if (photonView.IsMine && PhotonNetwork.IsConnected)
         {
-            if (Input.GetKeyDown(poopKey) || Input.GetKeyDown(altPoopKey))
+            if (Input.GetKey(poopKey) || Input.GetKey(altPoopKey))
             {
-                rb.AddRelativeForce(poopSpeed * Vector2.up, ForceMode2D.Impulse);
-                GameObject tempPlaceholder = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
-                Destroy(tempPlaceholder, poopLifetime); //destroys the poop after 10 seconds
+                if (poopPressure < maxPoopPressure)
+                {
+                    poopPressure += Time.deltaTime * 10f;
+                }
+                else
+                {
+                    poopPressure = maxPoopPressure;
+                }
+            }
+            else //if(Input.GetKeyUp(poopKey) || Input.GetKeyUp(altPoopKey))
+            {
+                if(poopPressure > 0f)
+                {
+                    poopPressure = poopPressure + minPoop;
+                    
+                    rb.AddRelativeForce(poopPressure * Vector2.up, ForceMode2D.Impulse);
+                    GameObject tempPlaceholder = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
+                    Destroy(tempPlaceholder, poopLifetime);
+                    poopPressure = 0f;
+                }
             }
 
             if (Input.GetKey(rotateRightKey))
@@ -70,4 +95,12 @@ public class PlayerManager : MonoBehaviourPun
             }
         }
     }
+
+    /*private void Poop()
+    {
+        rb.AddRelativeForce(poopSpeed * Vector2.up, ForceMode2D.Impulse);
+        GameObject tempPlaceholder = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
+        Destroy(tempPlaceholder, poopLifetime); //destroys the poop after 10 seconds
+        
+    }*/
 }
