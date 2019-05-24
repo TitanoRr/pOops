@@ -43,7 +43,7 @@ public class PlayerManager : MonoBehaviourPun
         playerPhysMat = rb.sharedMaterial;
         canvasInitRot = playerCanvas.transform.rotation;
         playerNameText.text = PhotonNetwork.NickName;
-
+         
         InitializeValues();
     }
 
