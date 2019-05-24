@@ -99,7 +99,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4513279667660984}
   - component: {fileID: 50455534382229016}
-  - component: {fileID: 60778368157911778}
+  - component: {fileID: 60238900440158080}
   - component: {fileID: 114300038549329422}
   - component: {fileID: 114169486127327210}
   - component: {fileID: 114889754931198012}
@@ -392,12 +392,12 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 6200000, guid: 34a31aee2b036954ebeaa9b04270de9c, type: 2}
+  m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
---- !u!60 &60778368157911778
+--- !u!60 &60238900440158080
 PolygonCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -409,7 +409,7 @@ PolygonCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.19, y: 0}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -421,26 +421,21 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.007196635, y: 0.47464603}
-      - {x: -0.13933936, y: 0.46447176}
-      - {x: -0.29342225, y: 0.3947177}
-      - {x: -0.44210017, y: 0.25032124}
-      - {x: -0.52285707, y: 0.024750054}
-      - {x: -0.5148293, y: -0.12108989}
-      - {x: -0.38627952, y: -0.40960413}
-      - {x: -0.42484415, y: -0.540427}
-      - {x: -0.35474485, y: -0.70484}
-      - {x: -0.18474329, y: -0.74802727}
-      - {x: -0.058611274, y: -0.7034332}
-      - {x: 0.0069408566, y: -0.71254224}
-      - {x: 0.1911571, y: -0.75466794}
-      - {x: 0.32870665, y: -0.6974692}
-      - {x: 0.39258623, y: -0.5392076}
-      - {x: 0.36177245, y: -0.39686373}
-      - {x: 0.47467142, y: -0.23450677}
-      - {x: 0.5105528, y: 0.014909286}
-      - {x: 0.425717, y: 0.2531507}
-      - {x: 0.22779524, y: 0.42416316}
+    - - {x: 0.31580293, y: 0.49433059}
+      - {x: 0.0252707, y: 0.59567183}
+      - {x: -0.31685376, y: 0.51420754}
+      - {x: -0.49618745, y: 0.23320544}
+      - {x: -0.53458786, y: -0.021707833}
+      - {x: -0.40523314, y: -0.3211996}
+      - {x: -0.43224764, y: -0.503677}
+      - {x: -0.23399854, y: -0.6995115}
+      - {x: -0.014527559, y: -0.5683027}
+      - {x: 0.2222811, y: -0.6804826}
+      - {x: 0.36035073, y: -0.5815824}
+      - {x: 0.4088874, y: -0.46653408}
+      - {x: 0.3768841, y: -0.28525773}
+      - {x: 0.5324788, y: -0.07634485}
+      - {x: 0.504611, y: 0.27532303}
 --- !u!114 &114106764420887234
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -514,6 +509,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 114889754931198012}
   - {fileID: 114290915939026824}
+  - {fileID: 114300038549329422}
   viewIdField: 0
   InstantiationId: 1
   isRuntimeInstantiated: 0
@@ -546,7 +542,6 @@ MonoBehaviour:
   playerCanvas: {fileID: 1655779180913100}
   playerNameText: {fileID: 114106764420887234}
   poopSpawner: {fileID: 4671071663587380}
-  playerPhysMat: {fileID: 6200000, guid: 34a31aee2b036954ebeaa9b04270de9c, type: 2}
   poopSpeed: 10
   rotSpeed: 10
   canvasInitRot: {x: 0, y: 0, z: 0, w: 0}

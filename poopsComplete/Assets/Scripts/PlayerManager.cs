@@ -4,7 +4,7 @@ using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerManager : MonoBehaviourPun
+public class PlayerManager : MonoBehaviourPun, IPunObservable
 {
     [SerializeField] private GameObject poop; //the poop prefab to be pooped!
     [SerializeField] private GameObject playerCanvas;
@@ -12,8 +12,6 @@ public class PlayerManager : MonoBehaviourPun
     [SerializeField] private Text playerNameText;
 
     [SerializeField] private Transform poopSpawner; //the poop spawner transform the player has
-
-    [SerializeField] private PhysicsMaterial2D playerPhysMat; 
 
     [SerializeField] private int poopSpeed = 10; //the player's move speed
     [SerializeField] private int rotSpeed = 10; //the player's rotation speed
@@ -40,23 +38,40 @@ public class PlayerManager : MonoBehaviourPun
     void Start ()
     {
         rb = GetComponentInParent<Rigidbody2D>();
-        playerPhysMat = rb.sharedMaterial;
         canvasInitRot = playerCanvas.transform.rotation;
         playerNameText.text = PhotonNetwork.NickName;
          
         InitializeValues();
     }
 
-    private void Update()
+    void Update()
     {
         playerCanvas.transform.rotation = canvasInitRot;
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        InputCheck();
+    }
+
+    //TODO: Make this work!
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(PhotonNetwork.NickName);
+        }
+        else
+        {
+            PhotonNetwork.NickName = (string)stream.ReceiveNext();
+        }
     }
 
     private void InitializeValues()
     {
         if (photonView.IsMine && PhotonNetwork.IsConnected)
         {
-            playerPhysMat.bounciness = 0.0f;
             currentHealth = startingHealth;
             transform.position = GetRandomPositionInArena();
             rb.velocity = Vector2.zero;
@@ -68,12 +83,6 @@ public class PlayerManager : MonoBehaviourPun
         Vector3 position = new Vector3(Random.Range(-9.0f, 9.0f), Random.Range(-9.0f, 9.0f), 0);
         return position;
     }
-
-    // Update is called once per frame
-	void FixedUpdate ()
-    {
-        InputCheck();
-	}
 
     private void Respawn()
     {
@@ -158,13 +167,7 @@ public class PlayerManager : MonoBehaviourPun
                 currentHealth -= poopDmg; 
             }
 
-            if (playerPhysMat.bounciness < 1.0f)
-            {
-                playerPhysMat.bounciness += 0.01f; 
-            }
-
             Debug.Log("Health:" + currentHealth);
-            Debug.Log("Bounciness:" + playerPhysMat.bounciness);
         }
     }
 
