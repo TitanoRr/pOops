@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviourPun
 {
     [SerializeField] private GameObject poop; //the poop prefab to be pooped!
+    [SerializeField] private GameObject playerCanvas;
+
+    [SerializeField] private Text playerNameText;
 
     [SerializeField] private Transform poopSpawner; //the poop spawner transform the player has
 
@@ -13,6 +17,8 @@ public class PlayerManager : MonoBehaviourPun
 
     [SerializeField] private int poopSpeed = 10; //the player's move speed
     [SerializeField] private int rotSpeed = 10; //the player's rotation speed
+
+    [SerializeField] private Quaternion canvasInitRot; //initial canvas rotation
 
     [SerializeField] private KeyCode rotateLeftKey = KeyCode.A;
     [SerializeField] private KeyCode rotateRightKey = KeyCode.D;
@@ -33,10 +39,17 @@ public class PlayerManager : MonoBehaviourPun
 
     void Start ()
     {
-        rb = GetComponent<Rigidbody2D>();
+        rb = GetComponentInParent<Rigidbody2D>();
         playerPhysMat = rb.sharedMaterial;
-        
+        canvasInitRot = playerCanvas.transform.rotation;
+        playerNameText.text = PhotonNetwork.NickName;
+
         InitializeValues();
+    }
+
+    private void Update()
+    {
+        playerCanvas.transform.rotation = canvasInitRot;
     }
 
     private void InitializeValues()
