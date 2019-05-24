@@ -9,6 +9,8 @@ public class PlayerManager : MonoBehaviourPun
 
     [SerializeField] private Transform poopSpawner; //the poop spawner transform the player has
 
+    [SerializeField] private PhysicsMaterial2D playerPhysMat; 
+
     [SerializeField] private int poopSpeed = 10; //the player's move speed
     [SerializeField] private int rotSpeed = 10; //the player's rotation speed
 
@@ -22,21 +24,27 @@ public class PlayerManager : MonoBehaviourPun
     [SerializeField] private float minPoop = 2.0f;
     [SerializeField] private float maxPoopPressure = 10.0f;
     [SerializeField] private float poopMultiplier = 10.0f;
+    [SerializeField] private const float poopDmg = 5.1f;
+
+    private float startingHealth = 100.0f;
+    private float currentHealth;
 
     private Rigidbody2D rb; //the player's rigibody2d
 
-	// Use this for initialization
-	void Start ()
+    void Start ()
     {
         rb = GetComponent<Rigidbody2D>();
-
+        playerPhysMat = rb.sharedMaterial;
+        
         InitializeValues();
     }
 
     private void InitializeValues()
     {
         if (photonView.IsMine && PhotonNetwork.IsConnected)
-        {      
+        {
+            playerPhysMat.bounciness = 0.0f;
+            currentHealth = startingHealth;
             transform.position = GetRandomPositionInArena();
             rb.velocity = Vector2.zero;
         }
@@ -90,11 +98,31 @@ public class PlayerManager : MonoBehaviourPun
             {
                 poopPressure = poopPressure + minPoop;
 
-                rb.AddRelativeForce(poopPressure * Vector2.up, ForceMode2D.Impulse);
-                Debug.Log("Spawning poop!");
-                GameObject tempPlaceholder = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
-                Destroy(tempPlaceholder, poopLifetime);
-                poopPressure = 0.0f;           
+                if (poopPressure >= maxPoopPressure)
+                {
+                    rb.AddRelativeForce(poopPressure * Vector2.up, ForceMode2D.Impulse);
+                    Debug.Log("Spawning poop!");
+                    GameObject tempPlaceholder = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
+                    GameObject tempPlaceholder1 = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
+                    GameObject tempPlaceholder2 = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
+                    GameObject tempPlaceholder3 = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
+                    GameObject tempPlaceholder4 = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
+                    Destroy(tempPlaceholder, poopLifetime);
+                    Destroy(tempPlaceholder1, poopLifetime);
+                    Destroy(tempPlaceholder2, poopLifetime);
+                    Destroy(tempPlaceholder3, poopLifetime);
+                    Destroy(tempPlaceholder4, poopLifetime);
+                    poopPressure = 0.0f;
+                }
+                else
+                {
+                    rb.AddRelativeForce(poopPressure * Vector2.up, ForceMode2D.Impulse);
+                    Debug.Log("Spawning poop!");
+                    GameObject tempPlaceholder = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
+                    Destroy(tempPlaceholder, poopLifetime);
+                    poopPressure = 0.0f;
+                }
+                      
             }
 
             if (Input.GetKey(rotateRightKey))
@@ -107,4 +135,24 @@ public class PlayerManager : MonoBehaviourPun
             }
         }
     }
+
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (!col.gameObject.CompareTag("arena"))
+        {
+            if (currentHealth > 0.0f)
+            {
+                currentHealth -= poopDmg; 
+            }
+
+            if (playerPhysMat.bounciness < 1.0f)
+            {
+                playerPhysMat.bounciness += 0.01f; 
+            }
+
+            Debug.Log("Health:" + currentHealth);
+            Debug.Log("Bounciness:" + playerPhysMat.bounciness);
+        }
+    }
+
 }
