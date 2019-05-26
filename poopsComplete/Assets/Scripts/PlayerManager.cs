@@ -13,7 +13,7 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
 
     [SerializeField] private Transform poopSpawner; //the poop spawner transform the player has
 
-    [SerializeField] private int poopSpeed = 10; //the player's move speed
+    [SerializeField] private int shotgunShells = 5; //the amount of poop in the full charge shot
     [SerializeField] private int rotSpeed = 10; //the player's rotation speed
 
     [SerializeField] private Quaternion canvasInitRot; //initial canvas rotation
@@ -23,12 +23,20 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
     [SerializeField] private KeyCode poopKey = KeyCode.W;
     [SerializeField] private KeyCode altPoopKey = KeyCode.Space;
 
-    [SerializeField] private float poopPressure = 0.0f;
+    [SerializeField] private float poopCharge = 0.0f;
     [SerializeField] private float poopLifetime = 10.0f;
     [SerializeField] private float minPoop = 2.0f;
-    [SerializeField] private float maxPoopPressure = 10.0f;
+    [SerializeField] private float maxPoopCharge = 10.0f;
     [SerializeField] private float poopMultiplier = 10.0f;
-    [SerializeField] private const float poopDmg = 5.1f;
+    [SerializeField] private float startingMass = 2.1f;
+    [SerializeField] private float massPerHit = 0.1f;
+
+    private const float poopDmg = 10.0f; //10 hits --> minimum mass --> red name!
+    private const float colorDmg = 51.0f; //the value the name gets/loses when hit to turn red!
+
+    private Slider chargeSlider;
+
+    private GameObject chargeSliderFill;
 
     private float startingHealth = 100.0f;
     private float currentHealth;
@@ -37,10 +45,23 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
 
     void Start ()
     {
-        rb = GetComponentInParent<Rigidbody2D>();
-        canvasInitRot = playerCanvas.transform.rotation;
-        playerNameText.text = PhotonNetwork.NickName;
-         
+
+        if (photonView.IsMine && PhotonNetwork.IsConnected) //if the prefab is the local player
+        {
+            rb = GetComponentInParent<Rigidbody2D>();
+
+            canvasInitRot = playerCanvas.transform.rotation;
+
+            chargeSliderFill = GameObject.FindGameObjectWithTag("chargeSliderFill");
+            chargeSliderFill.SetActive(false);
+
+            chargeSlider = GameObject.FindGameObjectWithTag("chargeSlider").GetComponent<Slider>();
+            chargeSlider.minValue = 0.0f;
+            chargeSlider.maxValue = 10.0f;
+
+            playerNameText.text = PhotonNetwork.NickName; //set nickname 
+        }
+
         InitializeValues();
     }
 
@@ -55,26 +76,47 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
         InputCheck();
     }
 
-    //TODO: Make this work!
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(PhotonNetwork.NickName);
+            stream.SendNext(playerNameText.text);
         }
         else
         {
-            PhotonNetwork.NickName = (string)stream.ReceiveNext();
+            playerNameText.text = (string)stream.ReceiveNext();
+        }
+    }
+
+    //Called in "OnValueChange" field of the slider, purely for aesthetic reasons!
+    public void DisableFillIfZero()
+    {
+        chargeSliderFill.SetActive(chargeSlider.value > 0.0f); //if we're charging, enable fill, otherwise disable
+    }
+
+    private void SetChargeUI()
+    {
+        if (poopCharge > maxPoopCharge)
+        {
+            chargeSlider.value = maxPoopCharge;
+        }
+        else
+        {
+            chargeSlider.value = poopCharge;
         }
     }
 
     private void InitializeValues()
     {
-        if (photonView.IsMine && PhotonNetwork.IsConnected)
+        if (photonView.IsMine && PhotonNetwork.IsConnected) //if the player prefab is the local player...
         {
-            currentHealth = startingHealth;
-            transform.position = GetRandomPositionInArena();
-            rb.velocity = Vector2.zero;
+            currentHealth = startingHealth; //reset health
+            transform.position = GetRandomPositionInArena(); //set random position
+            rb.velocity = Vector2.zero; //reset velocity
+            playerNameText.color = new Color(0.0f, 255.0f, 0.0f); //pure green!
+            rb.mass = 2.1f;
+
+            chargeSlider.value = 0.0f; //who spawns mid-charge!?
         }
     }
 
@@ -86,8 +128,6 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
 
     private void Respawn()
     {
-        //for now, this just sets the player back to 0,0,0
-        //later, this will respawn the player at one of the spawn points
         InitializeValues();     
     }
 
@@ -107,44 +147,31 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
         {
             if (Input.GetKey(poopKey) || Input.GetKey(altPoopKey))
             {
-                if (poopPressure < maxPoopPressure)
+                if (poopCharge < maxPoopCharge)
                 {
-                    poopPressure += Time.deltaTime * poopMultiplier;
+                    poopCharge += Time.deltaTime * poopMultiplier;
                 }
                 else
                 {
-                    poopPressure = maxPoopPressure;
+                    poopCharge = maxPoopCharge;
                 }
-            }
-            else if (poopPressure > 0.0f) //if(Input.GetKeyUp(poopKey) || Input.GetKeyUp(altPoopKey))
-            {
-                poopPressure = poopPressure + minPoop;
 
-                if (poopPressure >= maxPoopPressure)
+                SetChargeUI();
+            }
+            else if (poopCharge > 0.0f)
+            {
+                poopCharge += minPoop;
+
+                if (poopCharge >= maxPoopCharge)
                 {
-                    rb.AddRelativeForce(poopPressure * Vector2.up, ForceMode2D.Impulse);
-                    Debug.Log("Spawning poop!");
-                    GameObject tempPlaceholder = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
-                    GameObject tempPlaceholder1 = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
-                    GameObject tempPlaceholder2 = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
-                    GameObject tempPlaceholder3 = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
-                    GameObject tempPlaceholder4 = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
-                    Destroy(tempPlaceholder, poopLifetime);
-                    Destroy(tempPlaceholder1, poopLifetime);
-                    Destroy(tempPlaceholder2, poopLifetime);
-                    Destroy(tempPlaceholder3, poopLifetime);
-                    Destroy(tempPlaceholder4, poopLifetime);
-                    poopPressure = 0.0f;
+                    SpawnPoopThroughNetwork(shotgunShells); //shotgun shot (full charge)
                 }
                 else
                 {
-                    rb.AddRelativeForce(poopPressure * Vector2.up, ForceMode2D.Impulse);
-                    Debug.Log("Spawning poop!");
-                    GameObject tempPlaceholder = PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
-                    Destroy(tempPlaceholder, poopLifetime);
-                    poopPressure = 0.0f;
+                    SpawnPoopThroughNetwork(1); //single shot (not full charge)
                 }
-                      
+
+                SetChargeUI();
             }
 
             if (Input.GetKey(rotateRightKey))
@@ -158,17 +185,43 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
         }
     }
 
+    private void SpawnPoopThroughNetwork(int amountToSpawn)
+    {
+        rb.AddRelativeForce(poopCharge * Vector2.up, ForceMode2D.Impulse);
+
+        for (int i = 0; i < amountToSpawn; i++)
+        {
+            PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
+        }
+
+        poopCharge = 0.0f;
+    }
+
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (!col.gameObject.CompareTag("arena"))
+        if (!col.gameObject.CompareTag("arena")) //if we're hitting anything BUT the arena...
         {
             if (currentHealth > 0.0f)
             {
-                currentHealth -= poopDmg; 
+                currentHealth -= poopDmg;
+                rb.mass -= massPerHit;
+
+                if (playerNameText.color.r < 255) //first fill up red
+                {
+                    float red = colorDmg + playerNameText.color.r;
+                    playerNameText.color = new Color(red, playerNameText.color.g, playerNameText.color.b,
+                        playerNameText.color.a);
+                    Debug.Log("Red is " + playerNameText.color.r);
+                }
+                else if (playerNameText.color.g > 0) //then empty out green
+                {
+                    float green = playerNameText.color.g - colorDmg;
+                    playerNameText.color = new Color(playerNameText.color.r, green, playerNameText.color.b,
+                        playerNameText.color.a);
+                    Debug.Log("Green is " + playerNameText.color.g);
+                }
             }
 
-            Debug.Log("Health:" + currentHealth);
         }
     }
-
 }

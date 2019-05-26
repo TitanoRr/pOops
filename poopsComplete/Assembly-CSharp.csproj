@@ -160,9 +160,11 @@
      <Compile Include="Assets\Photon\PhotonUnityNetworking\Demos\PunCockpit\Scripts\ScoreHelper.cs" />
      <Compile Include="Assets\Photon\PhotonUnityNetworking\Demos\PunCockpit\Scripts\ThirdParty\PunCockpitEmbed.cs" />
      <Compile Include="Assets\Photon\PhotonUnityNetworking\Demos\Shared Assets\Scripts\DocLinks.cs" />
+     <Compile Include="Assets\Scripts\ChargeBarBehaviour.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Launcher.cs" />
      <Compile Include="Assets\Scripts\PauseButton.cs" />
+     <Compile Include="Assets\Scripts\PlayerIndicator.cs" />
      <Compile Include="Assets\Scripts\PlayerManager.cs" />
      <Compile Include="Assets\Scripts\PlayerName_InputField.cs" />
      <Compile Include="Assets\Scripts\PoopBehaviour.cs" />
@@ -362,22 +364,22 @@
  </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="PhotonUnityNetworking.Utilities.Culling.Editor.csproj">
-      <Project>{89A52D44-4975-E968-C801-0FB18288118A}</Project>      <Name>PhotonUnityNetworking.Utilities.Culling.Editor</Name>    </ProjectReference>
     <ProjectReference Include="PhotonWebSocket.csproj">
       <Project>{BFD70A03-BE28-75FB-2B05-8BB0741A80ED}</Project>      <Name>PhotonWebSocket</Name>    </ProjectReference>
+    <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
+      <Project>{4DF3C929-7B1E-CB3B-CA14-765AD7609FDE}</Project>      <Name>PhotonUnityNetworking.Utilities</Name>    </ProjectReference>
+    <ProjectReference Include="PhotonUnityNetworking.Utilities.Culling.Editor.csproj">
+      <Project>{89A52D44-4975-E968-C801-0FB18288118A}</Project>      <Name>PhotonUnityNetworking.Utilities.Culling.Editor</Name>    </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.csproj">
       <Project>{1C234DB9-02FA-F691-D58A-C2FA7BC469FB}</Project>      <Name>PhotonUnityNetworking</Name>    </ProjectReference>
-    <ProjectReference Include="PhotonChat.csproj">
-      <Project>{EC5ED144-B987-EDB8-2B44-11795A85E84D}</Project>      <Name>PhotonChat</Name>    </ProjectReference>
-    <ProjectReference Include="PhotonUnityNetworking.Utilities.PhotonPlayer.Editor.csproj">
-      <Project>{20B430EC-ED44-8781-E381-B3FE1B59E432}</Project>      <Name>PhotonUnityNetworking.Utilities.PhotonPlayer.Editor</Name>    </ProjectReference>
     <ProjectReference Include="PhotonRealtime.csproj">
       <Project>{E1B4ED2C-7D6F-141F-E96F-603EF9145C6B}</Project>      <Name>PhotonRealtime</Name>    </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Editor.csproj">
       <Project>{843B6AFC-221A-FD12-DB89-33525E2E3DDE}</Project>      <Name>PhotonUnityNetworking.Editor</Name>    </ProjectReference>
-    <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
-      <Project>{4DF3C929-7B1E-CB3B-CA14-765AD7609FDE}</Project>      <Name>PhotonUnityNetworking.Utilities</Name>    </ProjectReference>
+    <ProjectReference Include="PhotonUnityNetworking.Utilities.PhotonPlayer.Editor.csproj">
+      <Project>{20B430EC-ED44-8781-E381-B3FE1B59E432}</Project>      <Name>PhotonUnityNetworking.Utilities.PhotonPlayer.Editor</Name>    </ProjectReference>
+    <ProjectReference Include="PhotonChat.csproj">
+      <Project>{EC5ED144-B987-EDB8-2B44-11795A85E84D}</Project>      <Name>PhotonChat</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Bullet
   - arena
+  - chargeSlider
+  - chargeSliderFill
   layers:
   - Default
   - TransparentFX

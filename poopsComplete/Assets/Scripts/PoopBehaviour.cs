@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class PoopBehaviour : MonoBehaviour
+public class PoopBehaviour : MonoBehaviourPunCallbacks
 {
     [SerializeField] private int poopFlyingSpeed;
     [SerializeField] private float poopLifetime = 10.0f;
@@ -18,18 +18,17 @@ public class PoopBehaviour : MonoBehaviour
         Fly();
     }
 
-    //TODO: make this work!
-    //void Update()
-    //{
-    //    if (timer < poopLifetime)
-    //    {
-    //        timer += Time.deltaTime;
-    //    }
-    //    else if (timer >= poopLifetime)
-    //    {
-    //        PhotonNetwork.Destroy(this.gameObject);
-    //    }
-    //}
+    void Update()
+    {
+        if (timer < poopLifetime) //if we haven't lived long enough
+        {
+            timer += Time.deltaTime; //add the time since last frame in the timer var
+        }
+        else if (timer >= poopLifetime) //else it's time to go.. :(
+        {
+            PhotonNetwork.Destroy(this.gameObject); //destroying through network fixes the poop-shotgun issue
+        }
+    }
 
     private void Fly()
     {
