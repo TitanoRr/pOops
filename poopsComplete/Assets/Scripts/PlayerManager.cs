@@ -31,10 +31,14 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
     [SerializeField] private float startingMass = 2.1f;
     [SerializeField] private float massPerHit = 0.1f;
 
+    [SerializeField] private AudioClip[] poopFX = new AudioClip[3]; //3 effects for now!
+
+    [SerializeField] private Slider chargeSlider;
+
     private const float poopDmg = 10.0f; //10 hits --> minimum mass --> red name!
     private const float colorDmg = 51.0f; //the value the name gets/loses when hit to turn red!
 
-    private Slider chargeSlider;
+    private AudioSource playerAudioSource;
 
     private GameObject chargeSliderFill;
 
@@ -55,9 +59,10 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
             chargeSliderFill = GameObject.FindGameObjectWithTag("chargeSliderFill");
             chargeSliderFill.SetActive(false);
 
-            chargeSlider = GameObject.FindGameObjectWithTag("chargeSlider").GetComponent<Slider>();
-            chargeSlider.minValue = 0.0f;
+            chargeSlider.minValue = 0.0f; 
             chargeSlider.maxValue = 10.0f;
+
+            playerAudioSource = GetComponent<AudioSource>();
 
             playerNameText.text = PhotonNetwork.NickName; //set nickname 
         }
@@ -115,7 +120,7 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
             rb.velocity = Vector2.zero; //reset velocity
             playerNameText.color = new Color(0.0f, 255.0f, 0.0f); //pure green!
             rb.mass = 2.1f;
-
+            poopCharge = 0.0f;
             chargeSlider.value = 0.0f; //who spawns mid-charge!?
         }
     }
@@ -187,6 +192,16 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
 
     private void SpawnPoopThroughNetwork(int amountToSpawn)
     {
+        if (amountToSpawn > 1) //this means we're doing full charge!
+        {
+            playerAudioSource.clip = poopFX[2]; //plays the poop charge effect!
+        }
+        else
+        {
+            playerAudioSource.clip = poopFX[Random.Range(0, 2)]; //plays one of the 2 poop effects, randomly! 
+        }
+        playerAudioSource.Play();
+
         rb.AddRelativeForce(poopCharge * Vector2.up, ForceMode2D.Impulse);
 
         for (int i = 0; i < amountToSpawn; i++)
@@ -211,14 +226,12 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
                     float red = colorDmg + playerNameText.color.r;
                     playerNameText.color = new Color(red, playerNameText.color.g, playerNameText.color.b,
                         playerNameText.color.a);
-                    Debug.Log("Red is " + playerNameText.color.r);
                 }
                 else if (playerNameText.color.g > 0) //then empty out green
                 {
                     float green = playerNameText.color.g - colorDmg;
                     playerNameText.color = new Color(playerNameText.color.r, green, playerNameText.color.b,
                         playerNameText.color.a);
-                    Debug.Log("Green is " + playerNameText.color.g);
                 }
             }
 
