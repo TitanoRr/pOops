@@ -49,6 +49,8 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
 
     void Start ()
     {
+        chargeSliderFill = GameObject.FindGameObjectWithTag("chargeSliderFill");
+        chargeSliderFill.SetActive(false); //deactivate always, we'll activate later if the prefab is the local player
 
         if (photonView.IsMine && PhotonNetwork.IsConnected) //if the prefab is the local player
         {
@@ -56,7 +58,6 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
 
             canvasInitRot = playerCanvas.transform.rotation;
 
-            chargeSliderFill = GameObject.FindGameObjectWithTag("chargeSliderFill");
             chargeSliderFill.SetActive(false);
 
             chargeSlider.minValue = 0.0f; 

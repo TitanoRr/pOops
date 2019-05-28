@@ -26,7 +26,8 @@ public class PoopBehaviour : MonoBehaviourPunCallbacks
         }
         else if (timer >= poopLifetime) //else it's time to go.. :(
         {
-            PhotonNetwork.Destroy(this.gameObject); //destroying through network fixes the poop-shotgun issue
+            //PhotonNetwork.Destroy(this.gameObject); //destroying through network fixes the poop-shotgun issue
+            Destroy(this.gameObject);
         }
     }
 
