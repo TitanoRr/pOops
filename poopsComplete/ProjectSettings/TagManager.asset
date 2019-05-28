@@ -8,6 +8,7 @@ TagManager:
   - arena
   - chargeSlider
   - chargeSliderFill
+  - helmGlass
   layers:
   - Default
   - TransparentFX

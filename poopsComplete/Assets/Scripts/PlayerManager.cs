@@ -8,6 +8,7 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
 {
     [SerializeField] private GameObject poop; //the poop prefab to be pooped!
     [SerializeField] private GameObject playerCanvas;
+    [SerializeField] private GameObject helmetGlass;
 
     [SerializeField] private Text playerNameText;
 
@@ -31,6 +32,8 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
     [SerializeField] private float startingMass = 2.1f;
     [SerializeField] private float massPerHit = 0.1f;
 
+    [SerializeField] private Color playerColor;
+
     [SerializeField] private AudioClip[] poopFX = new AudioClip[3]; //3 effects for now!
 
     [SerializeField] private Slider chargeSlider;
@@ -41,6 +44,8 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
     private AudioSource playerAudioSource;
 
     private GameObject chargeSliderFill;
+
+    private SpriteRenderer helmetGlassRenderer;
 
     private float startingHealth = 100.0f;
     private float currentHealth;
@@ -54,6 +59,26 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
 
         if (photonView.IsMine && PhotonNetwork.IsConnected) //if the prefab is the local player
         {
+            helmetGlassRenderer = helmetGlass.GetComponent<SpriteRenderer>();
+            int index = PhotonNetwork.CurrentRoom.PlayerCount - 1;
+
+            if (index == 0)
+            {
+                playerColor = Color.blue;
+            }
+            else if (index == 1)
+            {
+                playerColor = Color.yellow;
+            }
+            else if (index == 2)
+            {
+                playerColor = Color.magenta;
+            }
+            else if (index == 3)
+            {
+                playerColor = Color.red;
+            }
+            
             rb = GetComponentInParent<Rigidbody2D>();
 
             canvasInitRot = playerCanvas.transform.rotation;
@@ -68,6 +93,7 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
             playerNameText.text = PhotonNetwork.NickName; //set nickname 
         }
 
+        helmetGlassRenderer.color = playerColor;
         InitializeValues();
     }
 
