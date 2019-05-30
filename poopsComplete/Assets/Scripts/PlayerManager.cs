@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,17 +39,21 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
 
     [SerializeField] private Slider chargeSlider;
 
+    private bool isDead = false;
+
+    private int playerLives = 0; //this defaults to 0 but will change based on room's settings!
+
     private const float poopDmg = 10.0f; //10 hits --> minimum mass --> red name!
     private const float colorDmg = 51.0f; //the value the name gets/loses when hit to turn red!
+
+    private float startingHealth = 100.0f;
+    private float currentHealth;
 
     private AudioSource playerAudioSource;
 
     private GameObject chargeSliderFill;
 
     private SpriteRenderer helmetGlassRenderer;
-
-    private float startingHealth = 100.0f;
-    private float currentHealth;
 
     private Rigidbody2D rb; //the player's rigibody2d
 
@@ -126,6 +131,8 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
         chargeSliderFill.SetActive(chargeSlider.value > 0.0f); //if we're charging, enable fill, otherwise disable
     }
 
+    public bool IsDead() { return isDead; }
+
     private void SetChargeUI()
     {
         if (poopCharge > maxPoopCharge)
@@ -160,15 +167,23 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
 
     private void Respawn()
     {
-        InitializeValues();     
+        if (playerLives > 0)
+        {
+            playerLives--;
+
+            InitializeValues(); 
+        }
+        else
+        {
+            isDead = true;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
         if (photonView.IsMine && PhotonNetwork.IsConnected)
         {
-            Respawn();
-            //TODO: Lose a life
+            Respawn(); //tries to respawn if lives>0 or dies!
         }
     }
 
@@ -177,42 +192,45 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
 
         if (photonView.IsMine && PhotonNetwork.IsConnected)
         {
-            if (Input.GetKey(poopKey) || Input.GetKey(altPoopKey))
+            if (!isDead)
             {
-                if (poopCharge < maxPoopCharge)
+                if (Input.GetKey(poopKey) || Input.GetKey(altPoopKey))
                 {
-                    poopCharge += Time.deltaTime * poopMultiplier;
+                    if (poopCharge < maxPoopCharge)
+                    {
+                        poopCharge += Time.deltaTime * poopMultiplier;
+                    }
+                    else
+                    {
+                        poopCharge = maxPoopCharge;
+                    }
+
+                    SetChargeUI();
                 }
-                else
+                else if (poopCharge > 0.0f)
                 {
-                    poopCharge = maxPoopCharge;
+                    poopCharge += minPoop;
+
+                    if (poopCharge >= maxPoopCharge)
+                    {
+                        SpawnPoopThroughNetwork(shotgunShells); //shotgun shot (full charge)
+                    }
+                    else
+                    {
+                        SpawnPoopThroughNetwork(1); //single shot (not full charge)
+                    }
+
+                    SetChargeUI();
                 }
 
-                SetChargeUI();
-            }
-            else if (poopCharge > 0.0f)
-            {
-                poopCharge += minPoop;
-
-                if (poopCharge >= maxPoopCharge)
+                if (Input.GetKey(rotateRightKey))
                 {
-                    SpawnPoopThroughNetwork(shotgunShells); //shotgun shot (full charge)
+                    transform.Rotate(Vector3.back * rotSpeed);
                 }
-                else
+                else if (Input.GetKey(rotateLeftKey))
                 {
-                    SpawnPoopThroughNetwork(1); //single shot (not full charge)
-                }
-
-                SetChargeUI();
-            }
-
-            if (Input.GetKey(rotateRightKey))
-            {
-                transform.Rotate(Vector3.back * rotSpeed);
-            }
-            else if (Input.GetKey(rotateLeftKey))
-            {
-                transform.Rotate(Vector3.forward * rotSpeed);
+                    transform.Rotate(Vector3.forward * rotSpeed);
+                } 
             }
         }
     }
