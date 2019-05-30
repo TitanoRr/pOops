@@ -74,7 +74,6 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable
         PhotonNetwork.SerializationRate = _sendRate;
 
         _chargeSliderFill = GameObject.FindGameObjectWithTag("chargeSliderFill");
-        Debug.Log(_chargeSliderFill);
         _chargeSliderFill.SetActive(false);
 
         _chargeSlider.minValue = 0.0f;
@@ -130,6 +129,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable
             _playerColor = Color.red;
         }
 
+        _helmetGlassRenderer = _helmetGlass.GetComponent<SpriteRenderer>();
         _helmetGlassRenderer.color = _playerColor;
     }
 
