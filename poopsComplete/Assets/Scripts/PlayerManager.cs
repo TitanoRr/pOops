@@ -41,7 +41,7 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
 
     private bool isDead = false;
 
-    private int playerLives = 0; //this defaults to 0 but will change based on room's settings!
+    private int playerLives = 3; //this defaults to 0 but will change based on room's settings!
 
     private const float poopDmg = 10.0f; //10 hits --> minimum mass --> red name!
     private const float colorDmg = 51.0f; //the value the name gets/loses when hit to turn red!
@@ -62,9 +62,11 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
         chargeSliderFill = GameObject.FindGameObjectWithTag("chargeSliderFill");
         chargeSliderFill.SetActive(false); //deactivate always, we'll activate later if the prefab is the local player
 
+        helmetGlassRenderer = helmetGlass.GetComponent<SpriteRenderer>();
+
         if (photonView.IsMine && PhotonNetwork.IsConnected) //if the prefab is the local player
         {
-            helmetGlassRenderer = helmetGlass.GetComponent<SpriteRenderer>();
+            //helmetGlassRenderer = helmetGlass.GetComponent<SpriteRenderer>();
             int index = PhotonNetwork.CurrentRoom.PlayerCount - 1;
 
             if (index == 0)
