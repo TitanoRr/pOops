@@ -797,31 +797,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ccd55d6fcad18c43ac4f903e47d76de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poop: {fileID: 1461284111477276, guid: 58d7ec1952215a045b51ff5308bd14b4, type: 2}
-  playerCanvas: {fileID: 1655779180913100}
-  helmetGlass: {fileID: 1736717513762846}
-  playerNameText: {fileID: 114106764420887234}
-  poopSpawner: {fileID: 4671071663587380}
-  shotgunShells: 5
-  rotSpeed: 10
-  canvasInitRot: {x: 0, y: 0, z: 0, w: 0}
-  rotateLeftKey: 97
-  rotateRightKey: 100
-  poopKey: 119
-  altPoopKey: 32
-  poopCharge: 0
-  poopLifetime: 10
-  minPoop: 2
-  maxPoopCharge: 10
-  poopMultiplier: 10
-  startingMass: 2.1
-  massPerHit: 0.1
-  playerColor: {r: 1, g: 1, b: 1, a: 0}
-  poopFX:
-  - {fileID: 8300000, guid: 821f6ef390e6e724a81ad30c087a52a8, type: 3}
-  - {fileID: 8300000, guid: 1e1669b38b5206349a6e9c817e73685c, type: 3}
-  - {fileID: 8300000, guid: ac30a7e4a780b4946bbd145df1cc1e1f, type: 3}
-  chargeSlider: {fileID: 114327520839027738}
+  _poop: {fileID: 1461284111477276, guid: 58d7ec1952215a045b51ff5308bd14b4, type: 2}
+  _playerCanvas: {fileID: 1655779180913100}
+  _helmetGlass: {fileID: 1736717513762846}
+  _playerNameText: {fileID: 114106764420887234}
+  _poopSpawner: {fileID: 4671071663587380}
+  _sendRate: 50
+  _shotgunShells: 5
+  _rotSpeed: 10
+  _canvasInitRot: {x: 0, y: 0, z: 0, w: 0}
+  _rotateLeftKey: 97
+  _rotateRightKey: 100
+  _poopKey: 119
+  _altPoopKey: 32
+  _playerColor: {r: 0, g: 0, b: 0, a: 0}
+  _chargeSlider: {fileID: 114327520839027738}
 --- !u!114 &114327520839027738
 MonoBehaviour:
   m_ObjectHideFlags: 1

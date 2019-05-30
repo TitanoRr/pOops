@@ -1,112 +1,106 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerManager : MonoBehaviourPun, IPunObservable
-{
-    [SerializeField] private GameObject poop; //the poop prefab to be pooped!
-    [SerializeField] private GameObject playerCanvas;
-    [SerializeField] private GameObject helmetGlass;
+public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable
+{ 
 
-    [SerializeField] private Text playerNameText;
+    //***THIS IS USED BUT DUE TO THE PHOTONNETWORK.INSTANTIATE NEEDING IT IN A STRING, IT APPEARS AS UNUSED!***\\ 
+    [SerializeField] private GameObject _poop; //the _poop prefab to be pooped!
+    [SerializeField] private GameObject _playerCanvas;
+    [SerializeField] private GameObject _helmetGlass;
 
-    [SerializeField] private Transform poopSpawner; //the poop spawner transform the player has
+    [SerializeField] private Text _playerNameText;
 
-    [SerializeField] private int shotgunShells = 5; //the amount of poop in the full charge shot
-    [SerializeField] private int rotSpeed = 10; //the player's rotation speed
+    [SerializeField] private Transform _poopSpawner; //the _poop spawner transform the player has
 
-    [SerializeField] private Quaternion canvasInitRot; //initial canvas rotation
+    [SerializeField] private byte _sendRate = 50; //the _sendRate and syncSendRate of photon! if this is changed, make sure to check if the poopBehaviour's respective var needs to change too!
+    [SerializeField] private byte _shotgunShells = 5; //the amount of _poop in the full charge shot
+    [SerializeField] private byte _rotSpeed = 10; //the player's rotation speed
 
-    [SerializeField] private KeyCode rotateLeftKey = KeyCode.A;
-    [SerializeField] private KeyCode rotateRightKey = KeyCode.D;
-    [SerializeField] private KeyCode poopKey = KeyCode.W;
-    [SerializeField] private KeyCode altPoopKey = KeyCode.Space;
+    [SerializeField] private Quaternion _canvasInitRot; //initial canvas rotation
 
-    [SerializeField] private float poopCharge = 0.0f;
-    [SerializeField] private float poopLifetime = 10.0f;
-    [SerializeField] private float minPoop = 2.0f;
-    [SerializeField] private float maxPoopCharge = 10.0f;
-    [SerializeField] private float poopMultiplier = 10.0f;
-    [SerializeField] private float startingMass = 2.1f;
-    [SerializeField] private float massPerHit = 0.1f;
+    [SerializeField] private KeyCode _rotateLeftKey = KeyCode.A;
+    [SerializeField] private KeyCode _rotateRightKey = KeyCode.D;
+    [SerializeField] private KeyCode _poopKey = KeyCode.W;
+    [SerializeField] private KeyCode _altPoopKey = KeyCode.Space;
 
-    [SerializeField] private Color playerColor;
+    [SerializeField] [SuppressMessage("ReSharper", "InconsistentNaming")]
+    private const float STARTING_MASS = 2.1f;
+    [SerializeField] [SuppressMessage("ReSharper", "InconsistentNaming")]
+    private const float MIN_POOP = 2.0f;
+    [SerializeField] [SuppressMessage("ReSharper", "InconsistentNaming")]
+    private const float MAX_POOP_CHARGE = 10.0f;
+    [SerializeField] [SuppressMessage("ReSharper", "InconsistentNaming")]
+    private const float POOP_MULTIPLIER = 10.0f;
+    [SerializeField] [SuppressMessage("ReSharper", "InconsistentNaming")]
+    private const float MASS_PER_HIT = 0.1f;
 
-    [SerializeField] private AudioClip[] poopFX = new AudioClip[3]; //3 effects for now!
+    [SerializeField] private Color _playerColor;
 
-    [SerializeField] private Slider chargeSlider;
+    [SerializeField] private readonly AudioClip[] _poopFx = new AudioClip[3]; //3 effects for now!
 
-    private bool isDead = false;
+    [SerializeField] private Slider _chargeSlider;
 
-    private int playerLives = 3; //this defaults to 0 but will change based on room's settings!
+    private bool _isDead = false;
 
-    private const float poopDmg = 10.0f; //10 hits --> minimum mass --> red name!
-    private const float colorDmg = 51.0f; //the value the name gets/loses when hit to turn red!
+    private byte _myIndex;
+    private byte _playerLives = 3; //this defaults to 0 but will change based on room's settings!
 
-    private float startingHealth = 100.0f;
-    private float currentHealth;
+    private const byte POOP_DMG = 10; //10 hits --> minimum mass --> red name!
+    private const byte COLOR_DMG = 51; //the value the name gets/loses when hit to turn red!
 
-    private AudioSource playerAudioSource;
+    private float _poopCharge = 0.0f;
+    private float _startingHealth = 100.0f;
+    private float _currentHealth;
 
-    private GameObject chargeSliderFill;
+    private AudioSource _playerAudioSource;
 
-    private SpriteRenderer helmetGlassRenderer;
+    private GameObject _chargeSliderFill;
 
-    private Rigidbody2D rb; //the player's rigibody2d
+    private SpriteRenderer _helmetGlassRenderer;
+
+    private Rigidbody2D _rb; //the player's rigibody2d
 
     void Start ()
     {
-        chargeSliderFill = GameObject.FindGameObjectWithTag("chargeSliderFill");
-        chargeSliderFill.SetActive(false); //deactivate always, we'll activate later if the prefab is the local player
+        //These 2 lines should reduce lag and improve experience overall! 
+        PhotonNetwork.SendRate = _sendRate;
+        PhotonNetwork.SerializationRate = _sendRate;
 
-        helmetGlassRenderer = helmetGlass.GetComponent<SpriteRenderer>();
+        _chargeSliderFill = GameObject.FindGameObjectWithTag("chargeSliderFill");
+        Debug.Log(_chargeSliderFill);
+        _chargeSliderFill.SetActive(false);
+
+        _chargeSlider.minValue = 0.0f;
+        _chargeSlider.maxValue = 10.0f;
+
+        _helmetGlassRenderer = _helmetGlass.GetComponent<SpriteRenderer>();
 
         if (photonView.IsMine && PhotonNetwork.IsConnected) //if the prefab is the local player
         {
-            //helmetGlassRenderer = helmetGlass.GetComponent<SpriteRenderer>();
-            int index = PhotonNetwork.CurrentRoom.PlayerCount - 1;
+            SetIndexAndAdjustHelmColor(PhotonNetwork.CurrentRoom.PlayerCount - 1);
 
-            if (index == 0)
-            {
-                playerColor = Color.blue;
-            }
-            else if (index == 1)
-            {
-                playerColor = Color.yellow;
-            }
-            else if (index == 2)
-            {
-                playerColor = Color.magenta;
-            }
-            else if (index == 3)
-            {
-                playerColor = Color.red;
-            }
-            
-            rb = GetComponentInParent<Rigidbody2D>();
+            _rb = GetComponentInParent<Rigidbody2D>();
 
-            canvasInitRot = playerCanvas.transform.rotation;
+            _canvasInitRot = _playerCanvas.transform.rotation;
 
-            chargeSliderFill.SetActive(false);
+            _playerAudioSource = GetComponent<AudioSource>();
 
-            chargeSlider.minValue = 0.0f; 
-            chargeSlider.maxValue = 10.0f;
-
-            playerAudioSource = GetComponent<AudioSource>();
-
-            playerNameText.text = PhotonNetwork.NickName; //set nickname 
+            _playerNameText.text = PhotonNetwork.NickName; //set nickname 
         }
 
-        helmetGlassRenderer.color = playerColor;
         InitializeValues();
     }
 
     void Update()
     {
-        playerCanvas.transform.rotation = canvasInitRot;
+        _playerCanvas.transform.rotation = _canvasInitRot;
     }
 
     // Update is called once per frame
@@ -115,35 +109,69 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
         InputCheck();
     }
 
+    void SetIndexAndAdjustHelmColor(int index)
+    {
+        _myIndex = (byte)index;
+
+        if (_myIndex == 0)
+        {
+            _playerColor = Color.blue;
+        }
+        else if (_myIndex == 1)
+        {
+            _playerColor = Color.yellow;
+        }
+        else if (_myIndex == 2)
+        {
+            _playerColor = Color.magenta;
+        }
+        else if (_myIndex == 3)
+        {
+            _playerColor = Color.red;
+        }
+
+        _helmetGlassRenderer.color = _playerColor;
+    }
+
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(playerNameText.text);
+            stream.SendNext(_playerNameText.text);
+            stream.SendNext(_myIndex);
         }
         else
         {
-            playerNameText.text = (string)stream.ReceiveNext();
+            _playerNameText.text = (string)stream.ReceiveNext();
+
+            _myIndex = (byte) stream.ReceiveNext();
+            SetIndexAndAdjustHelmColor(_myIndex);
         }
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        _myIndex = (byte)(PhotonNetwork.CurrentRoom.PlayerCount - 1);
+        SetIndexAndAdjustHelmColor(_myIndex);
     }
 
     //Called in "OnValueChange" field of the slider, purely for aesthetic reasons!
     public void DisableFillIfZero()
     {
-        chargeSliderFill.SetActive(chargeSlider.value > 0.0f); //if we're charging, enable fill, otherwise disable
+        _chargeSliderFill.SetActive(_chargeSlider.value > 0.0f); //if we're charging, enable fill, otherwise disable
     }
 
-    public bool IsDead() { return isDead; }
+    public bool IsDead() { return _isDead; }
 
     private void SetChargeUI()
     {
-        if (poopCharge > maxPoopCharge)
+        if (_poopCharge > MAX_POOP_CHARGE)
         {
-            chargeSlider.value = maxPoopCharge;
+            _chargeSlider.value = MAX_POOP_CHARGE;
         }
         else
         {
-            chargeSlider.value = poopCharge;
+            _chargeSlider.value = _poopCharge;
         }
     }
 
@@ -151,13 +179,13 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
     {
         if (photonView.IsMine && PhotonNetwork.IsConnected) //if the player prefab is the local player...
         {
-            currentHealth = startingHealth; //reset health
+            _currentHealth = _startingHealth; //reset health
             transform.position = GetRandomPositionInArena(); //set random position
-            rb.velocity = Vector2.zero; //reset velocity
-            playerNameText.color = new Color(0.0f, 255.0f, 0.0f); //pure green!
-            rb.mass = 2.1f;
-            poopCharge = 0.0f;
-            chargeSlider.value = 0.0f; //who spawns mid-charge!?
+            _rb.velocity = Vector2.zero; //reset velocity
+            _playerNameText.color = new Color(0.0f, 255.0f, 0.0f); //pure green!
+            _rb.mass = STARTING_MASS;
+            _poopCharge = 0.0f;
+            _chargeSlider.value = 0.0f; //who spawns mid-charge!?
         }
     }
 
@@ -169,15 +197,15 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
 
     private void Respawn()
     {
-        if (playerLives > 0)
+        if (_playerLives > 0)
         {
-            playerLives--;
+            _playerLives--;
 
             InitializeValues(); 
         }
         else
         {
-            isDead = true;
+            _isDead = true;
         }
     }
 
@@ -191,31 +219,30 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
 
     private void InputCheck()
     {
-
         if (photonView.IsMine && PhotonNetwork.IsConnected)
         {
-            if (!isDead)
+            if (!_isDead)
             {
-                if (Input.GetKey(poopKey) || Input.GetKey(altPoopKey))
+                if (Input.GetKey(_poopKey) || Input.GetKey(_altPoopKey))
                 {
-                    if (poopCharge < maxPoopCharge)
+                    if (_poopCharge < MAX_POOP_CHARGE)
                     {
-                        poopCharge += Time.deltaTime * poopMultiplier;
+                        _poopCharge += Time.deltaTime * POOP_MULTIPLIER;
                     }
                     else
                     {
-                        poopCharge = maxPoopCharge;
+                        _poopCharge = MAX_POOP_CHARGE;
                     }
 
                     SetChargeUI();
                 }
-                else if (poopCharge > 0.0f)
+                else if (_poopCharge > 0.0f)
                 {
-                    poopCharge += minPoop;
+                    _poopCharge += MIN_POOP;
 
-                    if (poopCharge >= maxPoopCharge)
+                    if (_poopCharge >= MAX_POOP_CHARGE)
                     {
-                        SpawnPoopThroughNetwork(shotgunShells); //shotgun shot (full charge)
+                        SpawnPoopThroughNetwork(_shotgunShells); //shotgun shot (full charge)
                     }
                     else
                     {
@@ -225,13 +252,13 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
                     SetChargeUI();
                 }
 
-                if (Input.GetKey(rotateRightKey))
+                if (Input.GetKey(_rotateRightKey))
                 {
-                    transform.Rotate(Vector3.back * rotSpeed);
+                    transform.Rotate(Vector3.back * _rotSpeed);
                 }
-                else if (Input.GetKey(rotateLeftKey))
+                else if (Input.GetKey(_rotateLeftKey))
                 {
-                    transform.Rotate(Vector3.forward * rotSpeed);
+                    transform.Rotate(Vector3.forward * _rotSpeed);
                 } 
             }
         }
@@ -241,44 +268,44 @@ public class PlayerManager : MonoBehaviourPun, IPunObservable
     {
         if (amountToSpawn > 1) //this means we're doing full charge!
         {
-            playerAudioSource.clip = poopFX[2]; //plays the poop charge effect!
+            _playerAudioSource.clip = _poopFx[2]; //plays the _poop charge effect!
         }
         else
         {
-            playerAudioSource.clip = poopFX[Random.Range(0, 2)]; //plays one of the 2 poop effects, randomly! 
+            _playerAudioSource.clip = _poopFx[Random.Range(0, 2)]; //plays one of the 2 _poop effects, randomly! 
         }
-        playerAudioSource.Play();
+        _playerAudioSource.Play();
 
-        rb.AddRelativeForce(poopCharge * Vector2.up, ForceMode2D.Impulse);
+        _rb.AddRelativeForce(_poopCharge * Vector2.up, ForceMode2D.Impulse);
 
         for (int i = 0; i < amountToSpawn; i++)
         {
-            PhotonNetwork.Instantiate("poop", poopSpawner.position, poopSpawner.rotation);
+            PhotonNetwork.Instantiate("Poop", _poopSpawner.position, _poopSpawner.rotation);
         }
 
-        poopCharge = 0.0f;
+        _poopCharge = 0.0f;
     }
 
     private void OnCollisionEnter2D(Collision2D col)
     {
         if (!col.gameObject.CompareTag("arena")) //if we're hitting anything BUT the arena...
         {
-            if (currentHealth > 0.0f)
+            if (_currentHealth > 0.0f)
             {
-                currentHealth -= poopDmg;
-                rb.mass -= massPerHit;
+                _currentHealth -= POOP_DMG;
+                _rb.mass -= MASS_PER_HIT;
 
-                if (playerNameText.color.r < 255) //first fill up red
+                if (_playerNameText.color.r < 255) //first fill up red
                 {
-                    float red = colorDmg + playerNameText.color.r;
-                    playerNameText.color = new Color(red, playerNameText.color.g, playerNameText.color.b,
-                        playerNameText.color.a);
+                    float red = COLOR_DMG + _playerNameText.color.r;
+                    _playerNameText.color = new Color(red, _playerNameText.color.g, _playerNameText.color.b,
+                        _playerNameText.color.a);
                 }
-                else if (playerNameText.color.g > 0) //then empty out green
+                else if (_playerNameText.color.g > 0) //then empty out green
                 {
-                    float green = playerNameText.color.g - colorDmg;
-                    playerNameText.color = new Color(playerNameText.color.r, green, playerNameText.color.b,
-                        playerNameText.color.a);
+                    float green = _playerNameText.color.g - COLOR_DMG;
+                    _playerNameText.color = new Color(_playerNameText.color.r, green, _playerNameText.color.b,
+                        _playerNameText.color.a);
                 }
             }
 

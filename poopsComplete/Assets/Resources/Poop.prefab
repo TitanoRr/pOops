@@ -91,8 +91,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0dc533a3cde17a4bb6edca5b1b8d97e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poopFlyingSpeed: 350
-  poopLifetime: 10
+  _poopFlyingSpeed: 200
 --- !u!114 &114964943924686530
 MonoBehaviour:
   m_ObjectHideFlags: 1
