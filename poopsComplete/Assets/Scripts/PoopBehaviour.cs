@@ -41,7 +41,7 @@ public class PoopBehaviour : MonoBehaviourPunCallbacks
             }
             else
             {
-                Destroy(this.gameObject);
+                Destroy(this.gameObject); 
             }
 
         }
