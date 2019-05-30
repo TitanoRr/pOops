@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class PauseButton : MonoBehaviour
 {
-    [SerializeField] private GameObject exitButton;
+    [SerializeField] private GameObject pausePanel;
 
 	// Use this for initialization
 	void Start ()
     {
-	    exitButton.SetActive(false);	
+        pausePanel.SetActive(false);	
 	}
 	
 	// Update is called once per frame
@@ -17,13 +17,13 @@ public class PauseButton : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (exitButton.activeSelf)
+            if (pausePanel.activeSelf)
             {
-                exitButton.SetActive(false); 
+                pausePanel.SetActive(false); 
             } 
             else
             {
-                exitButton.SetActive(true);
+                pausePanel.SetActive(true); 
             }
         }
 	}

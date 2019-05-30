@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 
@@ -10,6 +11,7 @@ namespace poops_Namespace
     {
         [SerializeField] private GameObject progressLabel;
         [SerializeField] private GameObject controlPanel;
+        [SerializeField] private GameObject howToPlayPanel;
 
         [SerializeField] private byte maxPlayers = 4; //this allows a total of 5 rooms with the free version (5 maxed rooms)
 
@@ -26,6 +28,7 @@ namespace poops_Namespace
         void Start()
         {
             controlPanel.SetActive(true);
+            howToPlayPanel.SetActive(false);
             progressLabel.SetActive(false);
         }
 
@@ -72,6 +75,24 @@ namespace poops_Namespace
         {
             Debug.Log("Joined room!");
             PhotonNetwork.LoadLevel(1); //Scene at index 1 is the arena! This may be refactored if more arenas are added!
+        }
+
+        public void HowToPlayButton()
+        {
+            howToPlayPanel.SetActive(true);
+            controlPanel.SetActive(false);
+        }
+
+        public void BackButton()
+        {
+            howToPlayPanel.SetActive(false);
+            controlPanel.SetActive(true);
+        }
+        
+        public void ExitButton()
+        {
+            Application.Quit();
+            Debug.Log("Game Closed");
         }
     } 
 }

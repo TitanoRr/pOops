@@ -816,11 +816,6 @@ MonoBehaviour:
   poopMultiplier: 10
   startingMass: 2.1
   massPerHit: 0.1
-  colors:
-  - {r: 1, g: 0.209, b: 0.020689487, a: 0}
-  - {r: 0, g: 0.628, b: 1, a: 0}
-  - {r: 0, g: 1, b: 0, a: 0}
-  - {r: 1, g: 0, b: 1, a: 0}
   playerColor: {r: 1, g: 1, b: 1, a: 0}
   poopFX:
   - {fileID: 8300000, guid: 821f6ef390e6e724a81ad30c087a52a8, type: 3}

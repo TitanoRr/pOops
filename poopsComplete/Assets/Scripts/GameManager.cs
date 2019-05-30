@@ -48,6 +48,12 @@ namespace poops_Namespace
             PhotonNetwork.LeaveRoom();
         }
 
+        public void RageQuit()
+        {
+            Application.Quit();
+            Debug.Log("RAGE QUIT!");
+        }
+
         void LoadArena()
         {
             if (!PhotonNetwork.IsMasterClient)
@@ -57,13 +63,5 @@ namespace poops_Namespace
             PhotonNetwork.LoadLevel(1); //Scene at index 1 is our arena! TODO: Consider refactoring this if more arenas are added!
         }
 
-        ///Since we're using only 1 arena, not based on number of players, we don't have to load a new arena every time a player enters the room!
-        //public override void OnPlayerEnteredRoom(Player newPlayer)
-        //{
-        //    if (PhotonNetwork.IsMasterClient)
-        //    {
-        //        LoadArena();
-        //    }
-        //}
     } 
 }
