@@ -52,6 +52,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable
     private byte _myIndex;
     private byte _playerLives = 3; //this defaults to 0 but will change based on room's settings!
 
+    private const byte EXTREME_MODE_DIVIDER = 4; //divide poop_dmg and mass_per_hit with this when reducing health & mass under 0 or 0.1 respectively!
     private const byte POOP_DMG = 10; //10 hits --> minimum mass --> red name!
     private const byte COLOR_DMG = 51; //the value the name gets/loses when hit to turn red!
 
@@ -293,7 +294,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable
             if (_currentHealth > 0.0f)
             {
                 _currentHealth -= POOP_DMG;
-                _rb.mass -= MASS_PER_HIT;
+                _rb.mass -= MASS_PER_HIT; 
 
                 if (_playerNameText.color.r < 255) //first fill up red
                 {
@@ -308,6 +309,16 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable
                         _playerNameText.color.a);
                 }
             }
+
+            //TODO: Make sure this works!
+            //if (_rb.mass <= 0.1f)
+            //{
+            //    if (_rb.mass > 0.01f) //making the game harder!
+            //    {
+            //        _currentHealth -= POOP_DMG / EXTREME_MODE_DIVIDER;
+            //        _rb.mass -= MASS_PER_HIT / EXTREME_MODE_DIVIDER;
+            //    }
+            //}
 
         }
     }
