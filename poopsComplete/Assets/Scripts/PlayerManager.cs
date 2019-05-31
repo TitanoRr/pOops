@@ -43,7 +43,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] private Color _playerColor;
 
-    [SerializeField] private readonly AudioClip[] _poopFx = new AudioClip[3]; //3 effects for now!
+    [SerializeField] private AudioClip[] _poopFx = new AudioClip[3]; //3 effects for now!
 
     [SerializeField] private Slider _chargeSlider;
 
