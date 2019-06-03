@@ -53,6 +53,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\ChargeBarBehaviour.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\GameSettings.cs" />
      <Compile Include="Assets\Scripts\Launcher.cs" />
      <Compile Include="Assets\Scripts\PauseButton.cs" />
      <Compile Include="Assets\Scripts\PlayerIndicator.cs" />
