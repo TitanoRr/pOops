@@ -40,7 +40,8 @@ namespace poops_Namespace
             if (!PhotonNetwork.IsConnected)
             {
                 PhotonNetwork.GameVersion = gameVersion;
-                PhotonNetwork.ConnectUsingSettings(); 
+                PhotonNetwork.ConnectUsingSettings();
+                Debug.Log(PhotonNetwork.CurrentLobby);
             }
         }
 
